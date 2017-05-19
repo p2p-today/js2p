@@ -27,11 +27,11 @@ jsdeps: LICENSE
 ## Copying documentation from C-like language into the proper Restructred Text files
 jsdocs:
 	@echo "Copying documentation comments..."
-	@node js_src/docs_test.js
+	@node src/docs_test.js
 
 ## Run Javascript test code
 jstest: jsdeps
-	@node node_modules/istanbul/lib/cli.js cover node_modules/mocha/bin/_mocha js_src/test/*
+	@node node_modules/istanbul/lib/cli.js cover node_modules/mocha/bin/_mocha src/test/*
 
 ## Run Javascript tests AND upload results to codecov (testing services only)
 js_codecov: jstest
@@ -41,7 +41,7 @@ js_codecov: jstest
 browser: jsdeps
 	@mkdir -p build/browser
 	@echo "Building browser version..."
-	@cd js_src;\
+	@cd src;\
 	node ../node_modules/browserify/bin/cmd.js -r ./base.js -o ../build/browser/js2p-browser-$(jsver)-base.js -u snappy -u nodejs-websocket -u node-forge;\
 	node ../node_modules/browserify/bin/cmd.js -x ./base.js -r ./mesh.js -o ../build/browser/js2p-browser-$(jsver)-mesh.js -u snappy -u nodejs-websocket -u node-forge;\
 	node ../node_modules/browserify/bin/cmd.js -x ./base.js -x ./mesh.js -r ./sync.js -o ../build/browser/js2p-browser-$(jsver)-sync.js -u snappy -u nodejs-websocket -u node-forge;\
@@ -62,7 +62,7 @@ browser-min: browser
 js-compat: jsdeps
 	@mkdir -p build/browser-compat build/babel
 	@echo "Transpiling..."
-	@node node_modules/babel-cli/bin/babel.js js_src -d build/babel
+	@node node_modules/babel-cli/bin/babel.js src -d build/babel
 
 ## Transpile Javascript code into a non ES6 format, for older browsers or Node.js v4 AND test this code
 js_compat_test: js-compat
@@ -95,6 +95,10 @@ browser-compat-min: browser-compat
 
 ## Alias for the above
 browser-min-compat: browser-compat-min
+
+## Clean up local folders, including Javascript depenedencies
+clean:
+	rm -rf node_modules build
 
 ## Run all Javascript-related build recipes
 all: LICENSE ES5 html browser browser-min browser-compat browser-compat-min
